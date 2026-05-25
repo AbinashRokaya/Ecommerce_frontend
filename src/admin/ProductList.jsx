@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AddProduct from "./AddProduct";
+import { LoginContext } from "../context/LoginContext";
 
 function ProductList() {
+  const { productId, setProductId } = useContext(LoginContext);
+
   const [isadded, setIsAdded] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isblur, setIsBlur] = useState(false);
@@ -9,7 +12,9 @@ function ProductList() {
   const [productValue, setProductValue] = useState([]);
 
   const handleEdit = (e) => {
-    console.log(e.target.value);
+    setProductId(e.target.value);
+    console.log(productId);
+
     setIsEdit(!isEdit);
     setIsBlur(!isblur);
     setMode("edit");
@@ -22,7 +27,7 @@ function ProductList() {
 
   useEffect(() => {
     const fetchProduct = () => {
-      fetch("http://127.0.0.1:8000/v1/products", {
+      fetch("http://localhost:8000/v1/products", {
         method: "GET",
         credentials: "include",
       })

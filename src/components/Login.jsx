@@ -50,7 +50,7 @@ function Login() {
     //   }
     // }
     console.log(formValue);
-    fetch("http://127.0.0.1:8000/v1/login", {
+    fetch("http://localhost:8000/v1/login", {
       method: "POST",
       credentials: "include",
 

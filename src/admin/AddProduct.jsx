@@ -1,29 +1,31 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { LoginContext } from "../context/LoginContext";
 import { useState } from "react";
 
 function AddProduct(props) {
-  const { setSuccessMessage, setIsSuccess, setErrorMessage, setIsError } =
-    useContext(LoginContext);
+  const {
+    setSuccessMessage,
+    setIsSuccess,
+    setErrorMessage,
+    setIsError,
+    productId,
+    setProductId,
+  } = useContext(LoginContext);
 
   const [productValue, setProductValue] = useState({
     product_name: "",
     product_price: 0,
     product_description: "",
-    product_category: 0,
+    product_category: 1,
     product_quantity: 0,
   });
-  const handleButton = () => {
-    const fetchProduct = () => {
-      fetch(`http://127.0.0.1:8000/v1/products/${props.type}`, {
-        method: "POST",
+  useEffect(() => {
+    if (props.type == "edit") {
+      console.log(productId);
+      fetch(`http://localhost:8000/v1/products/${productId}`, {
+        method: "GET",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify(productValue),
       })
         .then((response) => {
           return response.json().then((data) => {
@@ -34,8 +36,14 @@ function AddProduct(props) {
           });
         })
         .then((data) => {
-          setIsSuccess(true);
-          setSuccessMessage("New Product is Added");
+          setProductValue({
+            product_name: data["data"]["product_list"][0].product_name,
+            product_price: data["data"]["product_list"][0].product_price,
+            product_description:
+              data["data"]["product_list"][0].product_description,
+            product_category: data["data"]["product_list"][0].product_category,
+            product_quantity: data["data"]["product_list"][0].product_quantity,
+          });
 
           // TODO: You'll eventually want to save this data to state:
           // setProductValue(data);
@@ -45,15 +53,103 @@ function AddProduct(props) {
 
           setIsError(true);
 
-          if (err.detail && err.detail.length > 0) {
+          if (Array.isArray(err.detail)) {
             setErrorMessage(err.detail[0].msg);
+          } else if (typeof err.detail === "string") {
+            setErrorMessage(err.detail);
           } else {
-            setErrorMessage("Login failed");
+            setErrorMessage("Something went wrong");
           }
         });
-    };
+    }
+  }, []);
+  const handleButton = (e) => {
+    if (e.target.value == "add") {
+      const fetchProduct = () => {
+        fetch(`http://localhost:8000/v1/products/add`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-    fetchProduct();
+          body: JSON.stringify(productValue),
+        })
+          .then((response) => {
+            return response.json().then((data) => {
+              if (!response.ok) {
+                throw data;
+              }
+              return data;
+            });
+          })
+          .then((data) => {
+            setIsSuccess(true);
+            setSuccessMessage("New Product is Added");
+
+            // TODO: You'll eventually want to save this data to state:
+            // setProductValue(data);
+          })
+          .catch((err) => {
+            console.log(err);
+
+            setIsError(true);
+
+            if (Array.isArray(err.detail)) {
+              setErrorMessage(err.detail[0].msg);
+            } else if (typeof err.detail === "string") {
+              setErrorMessage(err.detail);
+            } else {
+              setErrorMessage("Something went wrong");
+            }
+          });
+      };
+
+      fetchProduct();
+    } else if (e.target.value == "edit") {
+      console.log("edit produt value", productValue);
+      const fetchEditProduct = () => {
+        fetch(`http://localhost:8000/v1/products/edit/${productId}`, {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify(productValue),
+        })
+          .then((response) => {
+            return response.json().then((data) => {
+              if (!response.ok) {
+                throw data;
+              }
+              return data;
+            });
+          })
+          .then((data) => {
+            setIsSuccess(true);
+            setSuccessMessage("produt is update");
+
+            // TODO: You'll eventually want to save this data to state:
+            // setProductValue(data);
+          })
+          .catch((err) => {
+            console.log(err);
+
+            setIsError(true);
+
+            if (Array.isArray(err.detail)) {
+              setErrorMessage(err.detail[0].msg);
+            } else if (typeof err.detail === "string") {
+              setErrorMessage(err.detail);
+            } else {
+              setErrorMessage("Something went wrong");
+            }
+          });
+      };
+
+      fetchEditProduct();
+    }
   };
 
   const handleBack = () => {
@@ -96,7 +192,7 @@ function AddProduct(props) {
           onChange={(e) => {
             setProductValue((prev) => ({
               ...prev,
-              [e.target.name]: e.target.value,
+              [e.target.name]: Number(e.target.value),
             }));
           }}
           className="border border-gray-400 p-2 rounded-lg w-full mt-1"
@@ -113,14 +209,14 @@ function AddProduct(props) {
           onChange={(e) => {
             setProductValue((prev) => ({
               ...prev,
-              [e.target.name]: e.target.value,
+              [e.target.name]: Number(e.target.value),
             }));
           }}
           className="border border-gray-400 p-2 rounded-lg w-full mt-1"
         >
-          <option value="electronics">Electronics</option>
-          <option value="clothing">Clothing</option>
-          <option value="accessories">Accessories</option>
+          <option value={1}>Electronics</option>
+          <option value={2}>Clothing</option>
+          <option value={3}>Accessories</option>
         </select>
       </div>
       <div className="w-full  ">
@@ -134,7 +230,7 @@ function AddProduct(props) {
           onChange={(e) => {
             setProductValue((prev) => ({
               ...prev,
-              [e.target.name]: e.target.value,
+              [e.target.name]: Number(e.target.value),
             }));
           }}
           className="border border-gray-400 p-2 rounded-lg w-full mt-1"
@@ -159,6 +255,7 @@ function AddProduct(props) {
       </div>
       <div className="w-full  mt-2 mb-2">
         <button
+          value={props.type}
           onClick={handleButton}
           className="bg-blue-500 text-lg text-white p-2 rounded-lg w-full hover:bg-blue-400 hover:shadow-2xl hover:shadow-gray-600 active:bg-blue-600 cursor-pointer"
         >
