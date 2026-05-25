@@ -68,11 +68,25 @@ function Order() {
         <div className="bg-white rounded-2xl shadow-md overflow-hidden">
           {/* Header */}
           <div className="flex justify-between items-center p-6 border-b">
-            <h1 className="text-2xl font-bold text-gray-800">All Orders</h1>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800">All Orders</h1>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="date"
+                className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition"
+              />
 
-            <button className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition">
-              Add Product
-            </button>
+              <select
+                name=""
+                id=""
+                className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition"
+              >
+                <option value="pending">Pending</option>
+                <option value="delivered">Delivered</option>
+                <option value="shipped">Shipped</option>
+              </select>
+            </div>
           </div>
 
           {/* Table */}

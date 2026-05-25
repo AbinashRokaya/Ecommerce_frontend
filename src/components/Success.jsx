@@ -2,10 +2,12 @@ import React, { useContext } from "react";
 import { LoginContext } from "../context/LoginContext";
 
 function Success() {
-  const { isSuccess, successMessage, setIsSuccess } = useContext(LoginContext);
+  const { isSuccess, successMessage, setIsSuccess, setSuccessMessage } =
+    useContext(LoginContext);
 
   setTimeout(() => {
     setIsSuccess(false);
+    setSuccessMessage("");
   }, 1000);
 
   return (

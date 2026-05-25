@@ -2,10 +2,12 @@ import React, { useContext } from "react";
 import { LoginContext } from "../context/LoginContext";
 
 function Errors() {
-  const { isError, errorMessage, setIsError } = useContext(LoginContext);
+  const { isError, errorMessage, setIsError, setErrorMessage } =
+    useContext(LoginContext);
 
   setTimeout(() => {
     setIsError(false);
+    setErrorMessage("");
   }, 1000);
   return (
     <div

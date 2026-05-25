@@ -32,23 +32,63 @@ function Login() {
   const nagavitor = useNavigate();
 
   const [formValue, setFormValue] = useState({
-    name: "",
+    username: "",
     password: "",
   });
 
   const handleLogin = () => {
-    for (let i = 0; i < User.length; i++) {
-      if (
-        User[i].user_name === formValue.name &&
-        User[i].password === formValue.password
-      ) {
-        setRole(User[i].role);
+    // for (let i = 0; i < User.length; i++) {
+    //   if (
+    //     User[i].user_name === formValue.name &&
+    //     User[i].password === formValue.password
+    //   ) {
+    //     setRole(User[i].role);
+    //     setIsSuccess(true);
+    //     setisLogin(true);
+    //     setSuccessMessage("Login Successful!");
+    //     nagavitor("/");
+    //   }
+    // }
+    console.log(formValue);
+    fetch("http://127.0.0.1:8000/v1/login", {
+      method: "POST",
+      credentials: "include",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(formValue),
+    })
+      .then((response) => {
+        return response.json().then((data) => {
+          if (!response.ok) {
+            throw data;
+          }
+          return data;
+        });
+      })
+      .then((data) => {
+        console.log("Server response:", data["user_detail"]["user_role"]);
+        setRole(data["user_detail"]["user_role"]);
+
         setIsSuccess(true);
+        setSuccessMessage("Successfully login");
         setisLogin(true);
-        setSuccessMessage("Login Successful!");
+
         nagavitor("/");
-      }
-    }
+      })
+      .catch((err) => {
+        console.log(err);
+
+        setIsError(true);
+
+        if (err.detail && err.detail.length > 0) {
+          setErrorMessage(err.detail[0].msg);
+        } else {
+          setErrorMessage("Login failed");
+        }
+      });
   };
 
   return (
@@ -60,8 +100,8 @@ function Login() {
           </label>
           <input
             type="text"
-            name="name"
-            value={formValue.name}
+            name="username"
+            value={formValue.username}
             onChange={(e) => {
               setFormValue((prev) => ({
                 ...prev,
