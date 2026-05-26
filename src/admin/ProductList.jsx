@@ -3,7 +3,14 @@ import AddProduct from "./AddProduct";
 import { LoginContext } from "../context/LoginContext";
 
 function ProductList() {
-  const { productId, setProductId } = useContext(LoginContext);
+  const {
+    productId,
+    setProductId,
+    setSuccessMessage,
+    setIsSuccess,
+    setErrorMessage,
+    setIsError,
+  } = useContext(LoginContext);
 
   const [isadded, setIsAdded] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -11,9 +18,44 @@ function ProductList() {
   const [mode, setMode] = useState("");
   const [productValue, setProductValue] = useState([]);
 
+  const handleDelete = (e) => {
+    const DeleteCategory = () => {
+      fetch(`http://localhost:8000/v1/products/${e.target.value}`, {
+        method: "DELETE",
+        credentials: "include",
+      })
+        .then((response) => {
+          return response.json().then((data) => {
+            if (!response.ok) {
+              throw data;
+            }
+            return data;
+          });
+        })
+        .then((data) => {
+          setIsSuccess(true);
+          setSuccessMessage(data["message"]);
+        })
+        .catch((err) => {
+          console.log(err);
+
+          setIsError(true);
+
+          if (Array.isArray(err.detail)) {
+            setErrorMessage(err.detail[0].msg);
+          } else if (typeof err.detail === "string") {
+            setErrorMessage(err.detail);
+          } else {
+            setErrorMessage("Something went wrong");
+          }
+        });
+    };
+
+    DeleteCategory();
+  };
+
   const handleEdit = (e) => {
     setProductId(e.target.value);
-    console.log(productId);
 
     setIsEdit(!isEdit);
     setIsBlur(!isblur);
@@ -40,14 +82,20 @@ function ProductList() {
           });
         })
         .then((data) => {
-          console.log("Server response:", data["data"]["product_list"]);
           setProductValue(data["data"]["product_list"]);
-
-          // TODO: You'll eventually want to save this data to state:
-          // setProductValue(data);
         })
         .catch((err) => {
           console.log(err);
+
+          setIsError(true);
+
+          if (Array.isArray(err.detail)) {
+            setErrorMessage(err.detail[0].msg);
+          } else if (typeof err.detail === "string") {
+            setErrorMessage(err.detail);
+          } else {
+            setErrorMessage("Something went wrong");
+          }
         });
     };
 
@@ -116,7 +164,11 @@ function ProductList() {
               >
                 Edit
               </button>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-400 hover:shadow-2xl hover:shadow-gray-600 active:bg-blue-600">
+              <button
+                value={product.product_id}
+                onClick={handleDelete}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-400 hover:shadow-2xl hover:shadow-gray-600 active:bg-blue-600"
+              >
                 Delete
               </button>
             </div>

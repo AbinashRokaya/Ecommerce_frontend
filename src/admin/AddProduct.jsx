@@ -44,9 +44,6 @@ function AddProduct(props) {
             product_category: data["data"]["product_list"][0].product_category,
             product_quantity: data["data"]["product_list"][0].product_quantity,
           });
-
-          // TODO: You'll eventually want to save this data to state:
-          // setProductValue(data);
         })
         .catch((err) => {
           console.log(err);
@@ -85,10 +82,7 @@ function AddProduct(props) {
           })
           .then((data) => {
             setIsSuccess(true);
-            setSuccessMessage("New Product is Added");
-
-            // TODO: You'll eventually want to save this data to state:
-            // setProductValue(data);
+            setSuccessMessage(data["message"]);
           })
           .catch((err) => {
             console.log(err);
@@ -107,7 +101,6 @@ function AddProduct(props) {
 
       fetchProduct();
     } else if (e.target.value == "edit") {
-      console.log("edit produt value", productValue);
       const fetchEditProduct = () => {
         fetch(`http://localhost:8000/v1/products/edit/${productId}`, {
           method: "PUT",
@@ -128,10 +121,7 @@ function AddProduct(props) {
           })
           .then((data) => {
             setIsSuccess(true);
-            setSuccessMessage("produt is update");
-
-            // TODO: You'll eventually want to save this data to state:
-            // setProductValue(data);
+            setSuccessMessage(data["message"]);
           })
           .catch((err) => {
             console.log(err);

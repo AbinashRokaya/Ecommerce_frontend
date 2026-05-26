@@ -1,4 +1,5 @@
-import React from "react";
+import React, { use, useContext, useEffect, useState } from "react";
+import { LoginContext } from "../context/LoginContext";
 
 function Order() {
   const orders = [
@@ -46,6 +47,63 @@ function Order() {
     Shipped: "bg-purple-100 text-purple-700",
     Pending: "bg-yellow-100 text-yellow-700",
   };
+
+  const {
+    setSuccessMessage,
+    setIsSuccess,
+    setErrorMessage,
+    setIsError,
+    productId,
+    setProductId,
+  } = useContext(LoginContext);
+
+  const [orderValue, setOrderVAlue] = useState([]);
+  useEffect(() => {
+    const fetchOrder = () => {
+      fetch(`http://localhost:8000/v1/orders/all`, {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((response) => {
+          return response.json().then((data) => {
+            if (!response.ok) {
+              throw data;
+            }
+            return data;
+          });
+        })
+        .then((data) => {
+          setOrderVAlue(data["data"]["list_all_item"]);
+          console.log(data);
+          setIsSuccess(true);
+          setSuccessMessage(data["message"]);
+        })
+        .catch((err) => {
+          console.log(err);
+
+          setIsError(true);
+
+          if (Array.isArray(err.detail)) {
+            setErrorMessage(err.detail[0].msg);
+          } else if (typeof err.detail === "string") {
+            setErrorMessage(err.detail);
+          } else {
+            setErrorMessage("Something went wrong");
+          }
+        });
+    };
+
+    fetchOrder();
+  }, []);
+  useEffect(() => {
+    // Only log if orderValue exists and has at least one item
+    if (orderValue && orderValue.length > 0) {
+      console.log("order", orderValue[0]["order"]);
+
+      // If you want to see the items inside that order:
+      console.log("order items", orderValue[0]["order_item"]);
+    }
+  }, [orderValue]);
 
   return (
     <div className="relative min-h-screen w-full bg-gray-100 ">
@@ -105,32 +163,34 @@ function Order() {
               </thead>
 
               <tbody>
-                {orders.map((order, index) => (
+                {orderValue.map((order_value) => (
                   <tr
-                    key={index}
+                    key={order_value.order.order_id}
                     className="border-t hover:bg-gray-50 transition"
                   >
                     <td className="p-5 font-semibold text-orange-500">
-                      {order.id}
+                      {order_value.order.order_id}
                     </td>
 
                     <td className="p-5 font-bold text-gray-800">
-                      {order.customer}
+                      {order_value.order.order_user_id}
                     </td>
 
-                    <td className="p-5 text-gray-600">{order.product}</td>
+                    <td className="p-5 text-gray-600">Food</td>
 
-                    <td className="p-5 font-bold text-black">{order.amount}</td>
+                    <td className="p-5 font-bold text-black">
+                      {order_value.order.order_amount}
+                    </td>
 
-                    <td className="p-5 text-gray-600">{order.payment}</td>
+                    <td className="p-5 text-gray-600">eSewa</td>
 
-                    <td className="p-5 text-gray-600">{order.date}</td>
+                    <td className="p-5 text-gray-600">2024-07-11</td>
 
                     <td className="p-5">
                       <span
-                        className={`px-4 py-1 rounded-full text-sm font-semibold ${statusColor[order.status]}`}
+                        className={`px-4 py-1 rounded-full text-sm font-semibold `}
                       >
-                        {order.status}
+                        Pending
                       </span>
                     </td>
                   </tr>

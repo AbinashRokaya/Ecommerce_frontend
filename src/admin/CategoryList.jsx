@@ -1,18 +1,67 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Category from "./Category";
 import AddProduct from "./AddProduct";
 import { useNavigate } from "react-router-dom";
+import { LoginContext } from "../context/LoginContext";
 
 function CategoryList() {
+  const {
+    productId,
+    setProductId,
+    setSuccessMessage,
+    setIsSuccess,
+    setErrorMessage,
+    setIsError,
+  } = useContext(LoginContext);
+
   const [isadded, setIsAdded] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isblur, setIsBlur] = useState(false);
   const [mode, setMode] = useState("");
+  const [editId, setEditId] = useState(0);
+  const [categoryValue, setCategoryValue] = useState([]);
 
   const nagavitor = useNavigate();
+  const handleDelete = (e) => {
+    setEditId(e.target.value);
+    const DeleteCategory = () => {
+      fetch(`http://localhost:8000/v1/categorys/${editId}`, {
+        method: "DELETE",
+        credentials: "include",
+      })
+        .then((response) => {
+          return response.json().then((data) => {
+            if (!response.ok) {
+              throw data;
+            }
+            return data;
+          });
+        })
+        .then((data) => {
+          setIsSuccess(true);
+          setSuccessMessage(data["message"]);
+        })
+        .catch((err) => {
+          console.log(err);
+
+          setIsError(true);
+
+          if (Array.isArray(err.detail)) {
+            setErrorMessage(err.detail[0].msg);
+          } else if (typeof err.detail === "string") {
+            setErrorMessage(err.detail);
+          } else {
+            setErrorMessage("Something went wrong");
+          }
+        });
+    };
+
+    DeleteCategory();
+  };
 
   const handleEdit = (e) => {
-    console.log(e.target.value);
+    setProductId(e.target.value);
+
     setIsEdit(!isEdit);
     setIsBlur(!isblur);
     setMode("edit");
@@ -23,6 +72,40 @@ function CategoryList() {
     setMode("add");
   };
 
+  useEffect(() => {
+    const fetchCategory = () => {
+      fetch("http://localhost:8000/v1/categorys", {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((response) => {
+          return response.json().then((data) => {
+            if (!response.ok) {
+              throw data;
+            }
+            return data;
+          });
+        })
+        .then((data) => {
+          setCategoryValue(data["data"]["category_list"]);
+        })
+        .catch((err) => {
+          console.log(err);
+
+          setIsError(true);
+
+          if (Array.isArray(err.detail)) {
+            setErrorMessage(err.detail[0].msg);
+          } else if (typeof err.detail === "string") {
+            setErrorMessage(err.detail);
+          } else {
+            setErrorMessage("Something went wrong");
+          }
+        });
+    };
+
+    fetchCategory();
+  }, []);
   return (
     <div className="relative min-h-screen w-full bg-gray-100 ">
       {isadded && (
@@ -51,70 +134,47 @@ function CategoryList() {
       <div
         className={`w-full p-6 h-full bg-gray-600 flex flex-row gap-6 flex-wrap ${isblur ? "blur-sm" : ""}`}
       >
-        <div className=" bg-gray-200 h-full w-[25%] rounded-2xl p-6">
-          <div>
-            <img
-              src="/product.jpg  "
-              alt=""
-              className="w-50 h-50 rounded-2xl object-contain"
-            />
-          </div>
-          <div className="flex flex-col gap-1 mt-2">
+        {categoryValue.map((category) => (
+          <div
+            key={category.category_id}
+            className=" bg-gray-200 h-full w-[25%] rounded-2xl p-6"
+          >
             <div>
-              <h1 className="font-bold text-2xl">shoes</h1>
-              <h3 className="text-gray-600">Food</h3>
+              <img
+                src="/product.jpg  "
+                alt=""
+                className="w-50 h-50 rounded-2xl object-contain"
+              />
+            </div>
+            <div className="flex flex-col gap-1 mt-2">
+              <div>
+                <h1 className="font-bold text-2xl">{category.category_name}</h1>
+                <h3 className="text-gray-600">Food</h3>
+              </div>
+
+              <div>
+                <p>{category.category_description}</p>
+              </div>
             </div>
 
-            <div>
-              <p>lorem-ipsum dolor sit amet</p>
+            <div className="flex gap-2 justify-between items-center mt-4">
+              <button
+                value={category.category_id}
+                onClick={handleEdit}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-400 hover:shadow-2xl hover:shadow-gray-600 active:bg-blue-600"
+              >
+                Edit
+              </button>
+              <button
+                value={category.category_id}
+                onClick={handleDelete}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-400 hover:shadow-2xl hover:shadow-gray-600 active:bg-blue-600"
+              >
+                Delete
+              </button>
             </div>
           </div>
-
-          <div className="flex gap-2 justify-between items-center mt-4">
-            <button
-              value={1}
-              onClick={handleEdit}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-400 hover:shadow-2xl hover:shadow-gray-600 active:bg-blue-600"
-            >
-              Edit
-            </button>
-            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-400 hover:shadow-2xl hover:shadow-gray-600 active:bg-blue-600">
-              Delete
-            </button>
-          </div>
-        </div>
-        <div className=" bg-gray-200 h-full w-[25%] rounded-2xl p-6">
-          <div>
-            <img
-              src="/product.jpg  "
-              alt=""
-              className="w-50 h-50 rounded-2xl object-contain"
-            />
-          </div>
-          <div className="flex flex-col gap-1 mt-2">
-            <div>
-              <h1 className="font-bold text-2xl">shoes</h1>
-              <h3 className="text-gray-600">Food</h3>
-            </div>
-
-            <div>
-              <p>lorem-ipsum dolor sit amet</p>
-            </div>
-          </div>
-
-          <div className="flex gap-2 justify-between items-center mt-4">
-            <button
-              value={2}
-              onClick={handleEdit}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-400 hover:shadow-2xl hover:shadow-gray-600 active:bg-blue-600"
-            >
-              Edit
-            </button>
-            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-400 hover:shadow-2xl hover:shadow-gray-600 active:bg-blue-600">
-              Delete
-            </button>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );

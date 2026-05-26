@@ -25,6 +25,42 @@ function Cart() {
   const [quantity, setQuantity] = useState({});
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalquantity, setTotalQuantity] = useState(1);
+  const [cartValue, setCartValue] = useState([]);
+
+  useEffect(() => {
+    const fetchCart = () => {
+      fetch("http://localhost:8000/v1/carts/me", {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((response) => {
+          return response.json().then((data) => {
+            if (!response.ok) {
+              throw data;
+            }
+            return data;
+          });
+        })
+        .then((data) => {
+          setProductValue(data["data"]["product_list"]);
+        })
+        .catch((err) => {
+          console.log(err);
+
+          setIsError(true);
+
+          if (Array.isArray(err.detail)) {
+            setErrorMessage(err.detail[0].msg);
+          } else if (typeof err.detail === "string") {
+            setErrorMessage(err.detail);
+          } else {
+            setErrorMessage("Something went wrong");
+          }
+        });
+    };
+
+    fetchCart();
+  }, []);
 
   const handleTopicChange = (e) => {
     const value = Number(e.target.value);

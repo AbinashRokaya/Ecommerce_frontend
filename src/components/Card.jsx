@@ -1,33 +1,50 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { LoginContext } from "../context/LoginContext";
-const TOPICS = [
-  {
-    product_id: 1,
-    product_name: "shoes",
-    product_price: 200,
-    product_image: "shoes.jpg",
-  },
-  {
-    product_id: 2,
-    product_name: "shoes",
-    product_price: 300,
-    product_image: "shoes_1.jpg",
-  },
-  {
-    product_id: 3,
-    product_name: "shoes",
-    product_price: 400,
-    product_image: "product.jpg",
-  },
-];
+
 export default function Card() {
   const { productId, setProductId } = useContext(LoginContext);
+  const [productValue, setProductValue] = useState([]);
+
+  useEffect(() => {
+    const fetchProduct = () => {
+      fetch("http://localhost:8000/v1/products", {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((response) => {
+          return response.json().then((data) => {
+            if (!response.ok) {
+              throw data;
+            }
+            return data;
+          });
+        })
+        .then((data) => {
+          setProductValue(data["data"]["product_list"]);
+        })
+        .catch((err) => {
+          console.log(err);
+
+          setIsError(true);
+
+          if (Array.isArray(err.detail)) {
+            setErrorMessage(err.detail[0].msg);
+          } else if (typeof err.detail === "string") {
+            setErrorMessage(err.detail);
+          } else {
+            setErrorMessage("Something went wrong");
+          }
+        });
+    };
+
+    fetchProduct();
+  }, []);
 
   return (
     <>
       <div className="m-3 flex flex-row gap-3 items-center flex-wrap">
-        {TOPICS.map((topic) => (
+        {productValue.map((topic) => (
           <Link
             key={topic.product_id}
             to="/product"
@@ -36,7 +53,7 @@ export default function Card() {
           >
             <div className="w-full h-96 overflow-hidden rounded-2xl">
               <img
-                src={topic.product_image}
+                src="product.jpg"
                 alt=""
                 className="w-full h-full object-cover"
               />
