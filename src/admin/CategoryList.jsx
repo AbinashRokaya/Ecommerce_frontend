@@ -3,6 +3,7 @@ import Category from "./Category";
 import AddProduct from "./AddProduct";
 import { useNavigate } from "react-router-dom";
 import { LoginContext } from "../context/LoginContext";
+import API_URL from "../api/api";
 
 function CategoryList() {
   const {
@@ -25,7 +26,7 @@ function CategoryList() {
   const handleDelete = (e) => {
     setEditId(e.target.value);
     const DeleteCategory = () => {
-      fetch(`http://localhost:8000/v1/categorys/${editId}`, {
+      fetch(`${API_URL}/v1/categorys/${editId}`, {
         method: "DELETE",
         credentials: "include",
       })
@@ -74,7 +75,7 @@ function CategoryList() {
 
   useEffect(() => {
     const fetchCategory = () => {
-      fetch("http://localhost:8000/v1/categorys", {
+      fetch(`${API_URL}/v1/categorys`, {
         method: "GET",
         credentials: "include",
       })
@@ -149,11 +150,10 @@ function CategoryList() {
             <div className="flex flex-col gap-1 mt-2">
               <div>
                 <h1 className="font-bold text-2xl">{category.category_name}</h1>
-                <h3 className="text-gray-600">Food</h3>
               </div>
 
               <div>
-                <p>{category.category_description}</p>
+                <p className="text-gray-500">{category.category_description}</p>
               </div>
             </div>
 

@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { LoginContext } from "../context/LoginContext";
 import { useState } from "react";
+import API_URL from "../api/api";
 
 function AddProduct(props) {
   const {
@@ -23,7 +24,7 @@ function AddProduct(props) {
   useEffect(() => {
     if (props.type == "edit") {
       console.log(productId);
-      fetch(`http://localhost:8000/v1/products/${productId}`, {
+      fetch(`${API_URL}/v1/products/${productId}`, {
         method: "GET",
         credentials: "include",
       })
@@ -63,7 +64,7 @@ function AddProduct(props) {
   const handleButton = (e) => {
     if (e.target.value == "add") {
       const fetchProduct = () => {
-        fetch(`http://localhost:8000/v1/products/add`, {
+        fetch(`${API_URL}/v1/products/add`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -102,7 +103,7 @@ function AddProduct(props) {
       fetchProduct();
     } else if (e.target.value == "edit") {
       const fetchEditProduct = () => {
-        fetch(`http://localhost:8000/v1/products/edit/${productId}`, {
+        fetch(`${API_URL}/v1/products/edit/${productId}`, {
           method: "PUT",
           credentials: "include",
           headers: {

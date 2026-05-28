@@ -199,7 +199,7 @@ function Product() {
               {productValue.product_name}
             </h1>
             <p className="text-xl text-gray-600">
-              price: Rs. {productValue.product_price}
+              price Rs. {productValue.product_price}
             </p>
           </div>
           <div className="flex gap-2 flex-col ">

@@ -1,46 +1,8 @@
 import React, { use, useContext, useEffect, useState } from "react";
 import { LoginContext } from "../context/LoginContext";
+import API_URL from "../api/api";
 
 function Order() {
-  const orders = [
-    {
-      id: "#HML-2401",
-      customer: "Sita Gurung",
-      product: "Himalayan Honey × 3",
-      amount: "Rs. 1,350",
-      payment: "eSewa",
-      date: "2024-07-10",
-      status: "Delivered",
-    },
-    {
-      id: "#HML-2402",
-      customer: "Ram Thapa",
-      product: "Yak Wool Blanket × 1",
-      amount: "Rs. 2,800",
-      payment: "Khalti",
-      date: "2024-07-11",
-      status: "Processing",
-    },
-    {
-      id: "#HML-2403",
-      customer: "Puja Shrestha",
-      product: "Thangka Painting × 1",
-      amount: "Rs. 8,500",
-      payment: "Bank Transfer",
-      date: "2024-07-11",
-      status: "Shipped",
-    },
-    {
-      id: "#HML-2404",
-      customer: "Arun Rai",
-      product: "Timur Pepper × 3",
-      amount: "Rs. 540",
-      payment: "eSewa",
-      date: "2024-07-12",
-      status: "Pending",
-    },
-  ];
-
   const statusColor = {
     Delivered: "bg-green-100 text-green-700",
     Processing: "bg-blue-100 text-blue-700",
@@ -60,7 +22,7 @@ function Order() {
   const [orderValue, setOrderVAlue] = useState([]);
   useEffect(() => {
     const fetchOrder = () => {
-      fetch(`http://localhost:8000/v1/orders/all`, {
+      fetch(`${API_URL}/v1/orders/all`, {
         method: "GET",
         credentials: "include",
       })

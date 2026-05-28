@@ -17,6 +17,7 @@ import Category from "./admin/Category.jsx";
 import ProductList from "./admin/ProductList.jsx";
 import Order from "./admin/Order.jsx";
 import CategoryList from "./admin/CategoryList.jsx";
+import AuthLayout from "./components/AuthLayout.jsx";
 
 const router = createBrowserRouter([
   {
@@ -33,7 +34,11 @@ const router = createBrowserRouter([
           },
           {
             path: "cart",
-            element: <Cart />,
+            element: (
+              <AuthLayout authentication>
+                <Cart />,
+              </AuthLayout>
+            ),
           },
           {
             path: "product",
@@ -56,32 +61,58 @@ const router = createBrowserRouter([
       },
       {
         path: "/admin",
-        element: <Admin />,
+        element: (
+          <AuthLayout authentication>
+            <Admin />,
+          </AuthLayout>
+        ),
         children: [
           {
             path: "categoryList",
-            element: <CategoryList />,
+            element: (
+              <AuthLayout authentication>
+                <CategoryList />,
+              </AuthLayout>
+            ),
             children: [
               {
                 path: "category",
-                element: <Category />,
+
+                element: (
+                  <AuthLayout authentication>
+                    <Category />,
+                  </AuthLayout>
+                ),
               },
             ],
           },
 
           {
             path: "productList",
-            element: <ProductList />,
+            element: (
+              <AuthLayout authentication>
+                <ProductList />,
+              </AuthLayout>
+            ),
+
             children: [
               {
                 path: "add",
-                element: <AddProduct />,
+                element: (
+                  <AuthLayout authentication>
+                    <AddProduct />,
+                  </AuthLayout>
+                ),
               },
             ],
           },
           {
             path: "orders",
-            element: <Order />,
+            element: (
+              <AuthLayout authentication>
+                <Order />,
+              </AuthLayout>
+            ),
           },
         ],
       },

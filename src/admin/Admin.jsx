@@ -9,7 +9,7 @@ function Admin() {
         <div>
           <h2 className="text-xl font-bold text-white mb-4">Admin Panel</h2>
         </div>
-        <div className="w-full h-full bg-gray-700 rounded-lg p-4">
+        <div className="w-full min-h-screen bg-gray-700 rounded-lg p-4">
           <ul className="space-y-2">
             <li>
               <NavLink

@@ -16,18 +16,48 @@ function Register() {
 
   const nagavitor = useNavigate();
   const [register, setRegister] = useState({
-    name: "",
-    address: "",
-    email: "",
+    user_name: "",
+    user_address: "",
+    user_email: "",
     password: "",
   });
 
   const handleRegister = () => {
-    setRole("user");
-    setisLogin(true);
-    setIsSuccess(true);
-    setSuccessMessage("Register Successful!");
-    nagavitor("/");
+    fetch("http://localhost:8000/v1/users/", {
+      method: "POST",
+      credentials: "include",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(register),
+    })
+      .then((response) => {
+        return response.json().then((data) => {
+          if (!response.ok) {
+            throw data;
+          }
+          return data;
+        });
+      })
+      .then((data) => {
+        setIsSuccess(true);
+        setSuccessMessage(data["message"]);
+
+        nagavitor("/login");
+      })
+      .catch((err) => {
+        console.log(err);
+
+        setIsError(true);
+
+        if (err.detail && err.detail.length > 0) {
+          setErrorMessage(err.detail[0].msg);
+        } else {
+          setErrorMessage("Login failed");
+        }
+      });
   };
   return (
     <div className="min-h-screen w-full flex  flex-col gap-6 justify-center items-center bg-gray-100 ">
@@ -38,8 +68,8 @@ function Register() {
           </label>
           <input
             type="text"
-            name="name"
-            value={register.name}
+            name="user_name"
+            value={register.user_name}
             onChange={(e) => {
               setRegister((prev) => ({
                 ...prev,
@@ -55,8 +85,8 @@ function Register() {
           </label>
           <input
             type="text"
-            name="address"
-            value={register.address}
+            name="user_address"
+            value={register.user_address}
             onChange={(e) => {
               setRegister((prev) => ({
                 ...prev,
@@ -72,8 +102,8 @@ function Register() {
           </label>
           <input
             type="email"
-            name="email"
-            value={register.email}
+            name="user_email"
+            value={register.user_email}
             onChange={(e) => {
               setRegister((prev) => ({
                 ...prev,

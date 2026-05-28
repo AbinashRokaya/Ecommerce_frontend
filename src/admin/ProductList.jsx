@@ -20,7 +20,7 @@ function ProductList() {
 
   const handleDelete = (e) => {
     const DeleteCategory = () => {
-      fetch(`http://localhost:8000/v1/products/${e.target.value}`, {
+      fetch(`${API_URL}/v1/products/${e.target.value}`, {
         method: "DELETE",
         credentials: "include",
       })
@@ -146,7 +146,7 @@ function ProductList() {
                   {product.product_name}
                 </h1>
                 <h3 className="text-gray-600">
-                  Category: {product.product_category}
+                  Category: {product.product_category_name}
                 </h3>
               </div>
 

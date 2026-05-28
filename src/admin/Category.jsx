@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../context/LoginContext";
 import { Link } from "react-router-dom";
+import API_URL from "../api/api";
 
 function Category(props) {
   const {
@@ -20,7 +21,7 @@ function Category(props) {
   useEffect(() => {
     if (props.type == "edit") {
       console.log(productId);
-      fetch(`http://localhost:8000/v1/categorys/${productId}`, {
+      fetch(`${API_URL}/v1/categorys/${productId}`, {
         method: "GET",
         credentials: "include",
       })
@@ -57,7 +58,7 @@ function Category(props) {
   const handleButton = (e) => {
     if (e.target.value == "add") {
       const fetchProduct = () => {
-        fetch(`http://localhost:8000/v1/categorys/add`, {
+        fetch(`${API_URL}/v1/categorys/add`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -96,7 +97,7 @@ function Category(props) {
       fetchProduct();
     } else if (e.target.value == "edit") {
       const fetchEditProduct = () => {
-        fetch(`http://localhost:8000/v1/categorys/edit/${productId}`, {
+        fetch(`${API_URL}/v1/categorys/edit/${productId}`, {
           method: "PUT",
           credentials: "include",
           headers: {

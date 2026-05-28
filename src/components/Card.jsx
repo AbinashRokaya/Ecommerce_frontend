@@ -61,7 +61,10 @@ export default function Card() {
 
             <div className="mt-4">
               <h1 className="text-lg font-semibold">{topic.product_name}</h1>
-              <p className="text-gray-600">price: Rs.{topic.product_price}</p>
+              <p className="text-gray-900">Price: Rs.{topic.product_price}</p>
+              <p className="text-gray-600">
+                Total quantity: {topic.product_quantity}
+              </p>
             </div>
           </Link>
         ))}

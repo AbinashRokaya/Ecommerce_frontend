@@ -10,6 +10,7 @@ import Cart from "./components/Cart";
 import { Outlet } from "react-router-dom";
 import Success from "./components/Success";
 import Errors from "./components/Errors";
+import Footer from "./components/Footer";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -20,6 +21,7 @@ function App() {
       <Success />
       <Errors />
       <Outlet />
+      <Footer />
     </>
   );
 }
