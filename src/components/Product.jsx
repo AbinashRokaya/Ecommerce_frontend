@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../context/LoginContext";
 import { Link, useNavigate } from "react-router-dom";
+import API_URL from "../api/api";
 
 function Product() {
   const {
@@ -41,7 +42,7 @@ function Product() {
     };
 
     const fetchOrder = () => {
-      fetch(`http://localhost:8000/v1/orders/`, {
+      fetch(`${API_URL}/v1/orders/`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -87,7 +88,7 @@ function Product() {
     };
 
     const fetchCart = () => {
-      fetch(`http://localhost:8000/v1/carts/`, {
+      fetch(`${API_URL}/v1/carts/`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -138,7 +139,7 @@ function Product() {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:8000/v1/products/${productId}`, {
+    fetch(`${API_URL}/v1/products/${productId}`, {
       method: "GET",
       credentials: "include",
     })

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginContext } from "../context/LoginContext";
+import API_URL from "../api/api";
 
 const User = [
   {
@@ -50,7 +51,7 @@ function Login() {
     //   }
     // }
     console.log(formValue);
-    fetch("http://localhost:8000/v1/login", {
+    fetch(`${API_URL}/v1/login`, {
       method: "POST",
       credentials: "include",
 

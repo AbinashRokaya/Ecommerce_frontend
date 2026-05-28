@@ -1,6 +1,7 @@
 import React, { use, useContext, useEffect, useState } from "react";
 import { LoginContext } from "../context/LoginContext";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../api/api";
 
 function Cart() {
   const {
@@ -22,7 +23,7 @@ function Cart() {
 
   useEffect(() => {
     const fetchCart = () => {
-      fetch("http://localhost:8000/v1/carts/me", {
+      fetch(`${API_URL}/v1/carts/me`, {
         method: "GET",
         credentials: "include",
       })
@@ -155,7 +156,7 @@ function Cart() {
   };
   const handleOrder = () => {
     const fetchOrder = () => {
-      fetch(`http://localhost:8000/v1/orders/`, {
+      fetch(`${API_URL}/v1/orders/`, {
         method: "POST",
         credentials: "include",
         headers: {

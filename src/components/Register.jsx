@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginContext } from "../context/LoginContext";
+import API_URL from "../api/api";
 
 function Register() {
   const {
@@ -23,7 +24,7 @@ function Register() {
   });
 
   const handleRegister = () => {
-    fetch("http://localhost:8000/v1/users/", {
+    fetch(`${API_URL}/v1/users/`, {
       method: "POST",
       credentials: "include",
 

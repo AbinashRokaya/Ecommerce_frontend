@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { LoginContext } from "../context/LoginContext";
+import API_URL from "../api/api";
 
 export default function Card() {
   const { productId, setProductId } = useContext(LoginContext);
@@ -8,7 +9,7 @@ export default function Card() {
 
   useEffect(() => {
     const fetchProduct = () => {
-      fetch("http://localhost:8000/v1/products", {
+      fetch(`${API_URL}/v1/products`, {
         method: "GET",
         credentials: "include",
       })
