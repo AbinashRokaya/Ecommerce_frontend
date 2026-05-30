@@ -54,7 +54,7 @@ export default function Card() {
           >
             <div className="w-full h-96 overflow-hidden rounded-2xl">
               <img
-                src="product.jpg"
+                src={topic.product_image_url}
                 alt=""
                 className="w-full h-full object-cover"
               />

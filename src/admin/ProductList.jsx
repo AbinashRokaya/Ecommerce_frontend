@@ -136,7 +136,7 @@ function ProductList() {
           >
             <div>
               <img
-                src="/product.jpg"
+                src={product.product_image_url || null}
                 alt={product.product_name}
                 className="w-50 h-50 rounded-2xl object-contain"
               />

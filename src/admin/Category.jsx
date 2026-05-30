@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import API_URL from "../api/api";
 
 function Category(props) {
+  const [image, setImage] = useState(null);
   const {
     setSuccessMessage,
     setIsSuccess,
@@ -16,6 +17,7 @@ function Category(props) {
   const [category, setCategory] = useState({
     category_name: "",
     category_description: "",
+    category_image_url: "",
   });
 
   useEffect(() => {
@@ -38,6 +40,7 @@ function Category(props) {
             category_name: data["data"]["category_list"][0].category_name,
             category_description:
               data["data"]["category_list"][0].category_description,
+            category_image_url: data["dat"]["category"][0].category_image_url,
           });
         })
         .catch((err) => {
@@ -57,7 +60,58 @@ function Category(props) {
   }, []);
   const handleButton = (e) => {
     if (e.target.value == "add") {
-      const fetchProduct = () => {
+      if (!image) {
+        setIsError(true);
+        setErrorMessage("Please select an image first.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", image);
+
+      fetch(`${API_URL}/v1/categorys/upload`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      })
+        .then((response) => {
+          return response.json().then((data) => {
+            if (!response.ok) {
+              throw data;
+            }
+            return data;
+          });
+        })
+        .then((data) => {
+          const uploadedImageUrl = data["data"].url;
+          console.log(data);
+
+          // Update states for UI persistence
+          setCategory((prev) => ({
+            ...prev,
+            category_image_url: uploadedImageUrl,
+          }));
+          const finalPayload = {
+            ...category,
+            category_image_url: uploadedImageUrl,
+          };
+          fetchProduct(finalPayload);
+        })
+        .catch((err) => {
+          console.log(err);
+
+          setIsError(true);
+
+          if (Array.isArray(err.detail)) {
+            setErrorMessage(err.detail[0].msg);
+          } else if (typeof err.detail === "string") {
+            setErrorMessage(err.detail);
+          } else {
+            setErrorMessage("Something went wrong");
+          }
+        });
+
+      const fetchProduct = (finalPayload) => {
         fetch(`${API_URL}/v1/categorys/add`, {
           method: "POST",
           credentials: "include",
@@ -65,7 +119,7 @@ function Category(props) {
             "Content-Type": "application/json",
           },
 
-          body: JSON.stringify(category),
+          body: JSON.stringify(finalPayload),
         })
           .then((response) => {
             return response.json().then((data) => {
@@ -78,6 +132,11 @@ function Category(props) {
           .then((data) => {
             setIsSuccess(true);
             setSuccessMessage(data["message"]);
+            setCategory({
+              category_name: "",
+              category_description: "",
+              category_image_url: "",
+            });
           })
           .catch((err) => {
             console.log(err);
@@ -93,8 +152,6 @@ function Category(props) {
             }
           });
       };
-
-      fetchProduct();
     } else if (e.target.value == "edit") {
       const fetchEditProduct = () => {
         fetch(`${API_URL}/v1/categorys/edit/${productId}`, {
@@ -117,6 +174,11 @@ function Category(props) {
           .then((data) => {
             setIsSuccess(true);
             setSuccessMessage(data["message"]);
+            setCategory({
+              category_name: "",
+              category_description: "",
+              category_image_url: "",
+            });
           })
           .catch((err) => {
             console.log(err);
@@ -142,13 +204,21 @@ function Category(props) {
     props.setIsBlur(false);
   };
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 w-[40%] h-[45vh] flex   flex-col gap-6 p-6 rounded-2xl z-40">
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 w-[40%] h-[50vh] flex   flex-col gap-6 p-6 rounded-2xl z-40">
       <button
         onClick={handleBack}
         className="bg-blue-500 text-white p-2 text-center rounded-lg cursor-pointer hover:bg-blue-400 hover:shadow-2xl hover:shadow-gray-600 active:bg-blue-600 w-20"
       >
         Back
       </button>
+      <div className="w-full">
+        <input
+          className="border border-gray-400 p-2 rounded-lg w-full mt-1 cursor-pointer"
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImage(e.target.files[0])}
+        />
+      </div>
       <div className="w-full  ">
         <label htmlFor="" className="text-md font-bold ">
           Category Name:

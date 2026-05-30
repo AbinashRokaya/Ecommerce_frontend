@@ -41,6 +41,7 @@ function CategoryList() {
         .then((data) => {
           setIsSuccess(true);
           setSuccessMessage(data["message"]);
+          nagavitor("/admin/categoryList");
         })
         .catch((err) => {
           console.log(err);
@@ -142,7 +143,7 @@ function CategoryList() {
           >
             <div>
               <img
-                src="/product.jpg  "
+                src={category.category_image_url || null}
                 alt=""
                 className="w-50 h-50 rounded-2xl object-contain"
               />
