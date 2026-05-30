@@ -68,46 +68,60 @@ function ProductList() {
     setMode("add");
   };
 
-  useEffect(() => {
-    const fetchProduct = () => {
-      fetch(`${API_URL}/v1/products`, {
-        method: "GET",
-        credentials: "include",
-      })
-        .then((response) => {
-          return response.json().then((data) => {
-            if (!response.ok) {
-              throw data;
-            }
-            return data;
-          });
-        })
-        .then((data) => {
-          setProductValue(data["data"]["product_list"]);
-        })
-        .catch((err) => {
-          console.log(err);
-
-          setIsError(true);
-
-          if (Array.isArray(err.detail)) {
-            setErrorMessage(err.detail[0].msg);
-          } else if (typeof err.detail === "string") {
-            setErrorMessage(err.detail);
-          } else {
-            setErrorMessage("Something went wrong");
+  const fetchProduct = () => {
+    fetch(`${API_URL}/v1/products`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((response) => {
+        return response.json().then((data) => {
+          if (!response.ok) {
+            throw data;
           }
+          return data;
         });
-    };
+      })
+      .then((data) => {
+        setProductValue(data["data"]["product_list"]);
+      })
+      .catch((err) => {
+        console.log(err);
 
+        setIsError(true);
+
+        if (Array.isArray(err.detail)) {
+          setErrorMessage(err.detail[0].msg);
+        } else if (typeof err.detail === "string") {
+          setErrorMessage(err.detail);
+        } else {
+          setErrorMessage("Something went wrong");
+        }
+      });
+  };
+
+  useEffect(() => {
     fetchProduct();
   }, []);
   // Add this below your fetch hook
 
   return (
     <div className="relative min-h-screen w-full bg-gray-100 ">
-      {isadded && <AddProduct set={setIsAdded} blur={setIsBlur} type={mode} />}
-      {isEdit && <AddProduct set={setIsEdit} blur={setIsBlur} type={mode} />}
+      {isadded && (
+        <AddProduct
+          fetchProduct={fetchProduct}
+          set={setIsAdded}
+          blur={setIsBlur}
+          type={mode}
+        />
+      )}
+      {isEdit && (
+        <AddProduct
+          fetchProduct={fetchProduct}
+          set={setIsEdit}
+          blur={setIsBlur}
+          type={mode}
+        />
+      )}
       <div
         className={`${isblur ? "blur-sm" : ""} flex justify-between items-center p-6 bg-gray-300 `}
       >

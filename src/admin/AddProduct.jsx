@@ -67,7 +67,7 @@ function AddProduct(props) {
     }
   }, []);
 
-  const fetchProduct = (finalPayload) => {
+  const addProduct = (finalPayload) => {
     fetch(`${API_URL}/v1/products/add`, {
       method: "POST",
       credentials: "include",
@@ -96,6 +96,7 @@ function AddProduct(props) {
           product_quantity: 0,
           product_image_url: "",
         });
+        props.fetchProduct();
       })
       .catch((err) => {
         console.log(err);
@@ -149,7 +150,7 @@ function AddProduct(props) {
             ...productValue,
             product_image_url: uploadedImageUrl,
           };
-          fetchProduct(finalPayload);
+          addProduct(finalPayload);
         })
         .catch((err) => {
           console.log(err);
